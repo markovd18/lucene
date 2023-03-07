@@ -15,17 +15,16 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
-
 import java.io.IOException;
 
 public class HelloLucene {
   public static void main(String[] args) throws IOException, ParseException {
     // 0. Specify the analyzer for tokenizing text.
-    //    The same analyzer should be used for indexing and searching
+    // The same analyzer should be used for indexing and searching
     Analyzer analyzer = new StandardAnalyzer();
 
     // 1. create the index
+    // TODO toto nahradit za FSDirectory, aby se ukladalo do souboru
     Directory index = new RAMDirectory();
 
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -53,7 +52,7 @@ public class HelloLucene {
 
     // 4. display results
     System.out.println("Found " + hits.length + " hits.");
-    for(int i=0;i<hits.length;++i) {
+    for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
       System.out.println((i + 1) + ". " + d.get("isbn") + "\t" + d.get("title"));
