@@ -6,4 +6,6 @@ target
 *.jar
 *.class
 
+storage/
+storage/*
 
