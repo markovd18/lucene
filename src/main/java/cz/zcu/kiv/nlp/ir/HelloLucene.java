@@ -1,6 +1,7 @@
 package cz.zcu.kiv.nlp.ir;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.cz.CzechAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -23,11 +24,12 @@ public class HelloLucene {
     // 0. Specify the analyzer for tokenizing text.
     // The same analyzer should be used for indexing and searching
     // TODO analyzeru předat reader na stopslova
-    Analyzer analyzer = new StandardAnalyzer();
+    // Analyzer analyzer = new StandardAnalyzer();
+    Analyzer analyzer = new CzechAnalyzer(CzechAnalyzer.getDefaultStopSet());
 
     // 1. create the index
     // TODO toto nahradit za FSDirectory, aby se ukladalo do souboru
-    Directory index = new RAMDirectory();
+    Directory index = IndexDirectoryType.IN_MEMORY.getDirectoryInstance();
 
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
