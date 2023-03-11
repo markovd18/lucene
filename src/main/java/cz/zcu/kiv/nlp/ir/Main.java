@@ -16,6 +16,7 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -23,28 +24,26 @@ public class Main {
 
   public static void main(String[] args) throws IOException, ParseException {
     // 0. Specify the analyzer for tokenizing text.
-    // The same analyzer should be used for indexing and searching
-    // TODO analyzeru předat reader na stopslova
-    // Analyzer analyzer = new StandardAnalyzer();
     StopwordsLoader stopwordsLoader = new StopwordsLoader(STOPWORDS_DEFAULT_PATH);
     final var stopwords = stopwordsLoader.loadStopwords();
     Analyzer analyzer = new CzechAnalyzer(stopwords);
 
     // 1. create the index
-    // TODO toto nahradit za FSDirectory, aby se ukladalo do souboru
-    Directory index = IndexDirectoryType.IN_MEMORY.getDirectoryInstance();
+    Directory index = IndexDirectoryType.FILE_BASED.getDirectoryInstance();
 
-    IndexWriterConfig config = new IndexWriterConfig(analyzer);
+    if (!DirectoryReader.indexExists(index)) {
+      IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
-    IndexWriter w = new IndexWriter(index, config);
-    addDoc(w, "Lucene in Action", "193398817");
-    addDoc(w, "Lucene for Dummies", "55320055Z");
-    addDoc(w, "Managing Gigabytes", "55063554A");
-    addDoc(w, "The Art of Computer Science", "9900333X");
-    w.close();
+      IndexWriter w = new IndexWriter(index, config);
+      addDoc(w, "Lucene in Action", "193398817");
+      addDoc(w, "Lucene for Dummies", "55320055Z");
+      addDoc(w, "Managing Gigabytes", "55063554A");
+      addDoc(w, "The Art of Computer Science", "9900333X");
+      w.close();
 
-    final var articles = loadArticles();
-    createHokejIndex(analyzer, index, articles);
+      final var articles = loadArticles();
+      createHokejIndex(analyzer, index, articles);
+    }
 
     // 2. query
     String querystr = args.length > 0 ? args[0] : "lucene";
@@ -65,7 +64,7 @@ public class Main {
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
       Document d = searcher.doc(docId);
-      System.out.println((i + 1) + ". " + d.get("isbn") + "\t" + d.get("title"));
+      System.out.println((i + 1) + ". " + d.get("author") + "\t" + d.get("title"));
     }
 
     // reader can only be closed when there
@@ -80,23 +79,6 @@ public class Main {
     // use a string field for isbn because we don't want it tokenized
     doc.add(new StringField("isbn", isbn, Field.Store.YES));
     w.addDocument(doc);
-  }
-
-  private static void addHokejDoc(IndexWriter writer, Article article)
-      throws IOException {
-    Document doc = new Document();
-    doc.add(new TextField("title", article.title(), Field.Store.YES));
-
-    doc.add(new TextField("author", article.author(), Field.Store.YES));
-
-    // https://cwiki.apache.org/confluence/display/LUCENE/IndexingDateFields
-    // https://stackoverflow.com/questions/5495645/indexing-and-searching-date-in-lucene
-    // final var date = DateTools.dateToString(article.date(),
-    // DateTools.Resolution.SECOND);
-    doc.add(new StringField("date", article.date(), Field.Store.YES));
-    doc.add(new TextField("content", article.content(), Field.Store.YES));
-
-    writer.addDocument(doc);
   }
 
   private static List<Article> loadArticles() {
@@ -501,9 +483,7 @@ public class Main {
   private static void createHokejIndex(Analyzer analyzer, Directory index, List<Article> articles) {
     IndexWriterConfig config = new IndexWriterConfig(analyzer);
     try (IndexWriter w = new IndexWriter(index, config)) {
-      for (var article : articles) {
-        addHokejDoc(w, article);
-      }
+      w.addDocuments(articles.stream().map(Article::toDocument).collect(Collectors.toList()));
     } catch (IOException e) {
       e.printStackTrace();
     }
