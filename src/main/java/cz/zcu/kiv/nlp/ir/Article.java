@@ -9,8 +9,9 @@ public record Article(
     String title,
     String author,
     String date,
-    String content) {
+    String content) implements Indexable {
 
+  @Override
   public Document toDocument() {
     Document doc = new Document();
     doc.add(new TextField("title", title, Field.Store.YES));
