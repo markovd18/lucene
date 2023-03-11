@@ -2,7 +2,6 @@ package cz.zcu.kiv.nlp.ir;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cz.CzechAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -15,17 +14,21 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
 import java.io.IOException;
 import java.util.List;
 
-public class HelloLucene {
+public class Main {
+
+  private static final String STOPWORDS_DEFAULT_PATH = "stopwords-cs.txt";
+
   public static void main(String[] args) throws IOException, ParseException {
     // 0. Specify the analyzer for tokenizing text.
     // The same analyzer should be used for indexing and searching
     // TODO analyzeru předat reader na stopslova
     // Analyzer analyzer = new StandardAnalyzer();
-    Analyzer analyzer = new CzechAnalyzer(CzechAnalyzer.getDefaultStopSet());
+    StopwordsLoader stopwordsLoader = new StopwordsLoader(STOPWORDS_DEFAULT_PATH);
+    final var stopwords = stopwordsLoader.loadStopwords();
+    Analyzer analyzer = new CzechAnalyzer(stopwords);
 
     // 1. create the index
     // TODO toto nahradit za FSDirectory, aby se ukladalo do souboru
@@ -85,7 +88,12 @@ public class HelloLucene {
     doc.add(new TextField("title", article.title(), Field.Store.YES));
 
     doc.add(new TextField("author", article.author(), Field.Store.YES));
-    doc.add(new TextField("date", article.date(), Field.Store.YES));
+
+    // https://cwiki.apache.org/confluence/display/LUCENE/IndexingDateFields
+    // https://stackoverflow.com/questions/5495645/indexing-and-searching-date-in-lucene
+    // final var date = DateTools.dateToString(article.date(),
+    // DateTools.Resolution.SECOND);
+    doc.add(new StringField("date", article.date(), Field.Store.YES));
     doc.add(new TextField("content", article.content(), Field.Store.YES));
 
     writer.addDocument(doc);
