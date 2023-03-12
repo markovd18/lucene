@@ -17,6 +17,7 @@ import cz.zcu.kiv.nlp.ir.storage.Storage;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -46,20 +47,30 @@ public class Main {
     Query q = new QueryParser("title", analyzer).parse(querystr);
 
     // 3. search
-    int hitsPerPage = 10;
+    int hitsPerPage = 1;
     try (IndexReader reader = DirectoryReader.open(index)) {
+      Scanner scanner = new Scanner(System.in);
       IndexSearcher searcher = new IndexSearcher(reader);
-      TopDocs docs = searcher.search(q, hitsPerPage);
+      TopDocs docs = searcher.searchAfter(null, q, hitsPerPage);
       ScoreDoc[] hits = docs.scoreDocs;
 
-      // 4. display results
-      System.out.println("Found " + hits.length + " hits.");
-      var storedFields = searcher.storedFields();
-      for (int i = 0; i < hits.length; ++i) {
-        int docId = hits[i].doc;
-        Document d = storedFields.document(docId);
-        System.out.format("%d. %s (%s) \t %s\n", i + 1, d.get("author"), d.get("date"), d.get("title"));
+      while (hits.length > 0) {
+        // 4. display results
+        var storedFields = searcher.storedFields();
+        for (final var hit : hits) {
+          int docId = hit.doc;
+          Document d = storedFields.document(docId);
+          System.out.format("%s (%s) \t %s\n", d.get("author"), d.get("date"), d.get("title"));
+        }
+
+        System.out.println("--- MORE");
+        scanner.nextLine();
+
+        docs = searcher.searchAfter(hits[hits.length - 1], q, hitsPerPage);
+        hits = docs.scoreDocs;
       }
+
+      scanner.close();
     }
   }
 
