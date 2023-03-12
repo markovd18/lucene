@@ -3,16 +3,15 @@ package cz.zcu.kiv.nlp.ir.storage;
 import java.util.Set;
 
 import cz.zcu.kiv.nlp.ir.Article;
-import cz.zcu.kiv.nlp.ir.Indexable;
 
 /**
  * In-Memory Storage implementation. Intended for testing and development
  * purposes only.
  */
-public class InMemoryStorage implements Storage {
+public class InMemoryStorage implements Storage<Article> {
 
   @Override
-  public Set<Indexable> getEntries() {
+  public Set<Article> getEntries() {
     return Set.of(new Article("Třebíč ovládla základní část, Šumperk padá do druhé ligy! Zlín už je v šestce",
         "Adam Bagar", "25. února 18:52",
         """

@@ -7,7 +7,7 @@ import cz.zcu.kiv.nlp.ir.Indexable;
 /**
  * Storage provides an interface to load indexable documents.
  */
-public interface Storage {
+public interface Storage<TDocument extends Indexable> {
 
-  Set<Indexable> getEntries();
+  Set<TDocument> getEntries();
 }
