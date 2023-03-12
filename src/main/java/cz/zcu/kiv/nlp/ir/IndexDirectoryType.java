@@ -6,12 +6,12 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
 
 public enum IndexDirectoryType {
-  IN_MEMORY("memory", () -> new RAMDirectory()),
+  IN_MEMORY("memory", () -> new ByteBuffersDirectory()),
   FILE_BASED("file", () -> {
     try {
       return FSDirectory.open(Path.of("index"));

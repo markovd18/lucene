@@ -65,9 +65,10 @@ public class Main {
 
     // 4. display results
     System.out.println("Found " + hits.length + " hits.");
+    var storedFields = searcher.storedFields();
     for (int i = 0; i < hits.length; ++i) {
       int docId = hits[i].doc;
-      Document d = searcher.doc(docId);
+      Document d = storedFields.document(docId);
       System.out.println((i + 1) + ". " + d.get("author") + "\t" + d.get("title"));
     }
 
