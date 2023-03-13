@@ -49,7 +49,7 @@ public class Main {
     Query q = new QueryParser("title", analyzer).parse(querystr);
 
     // 3. search
-    int hitsPerPage = 1;
+    int hitsPerPage = 3;
     try (final IndexReader reader = DirectoryReader.open(index)) {
       final var printer = new ResultPrinter(System.out);
       final var searcher = new IndexAnalyzer(new IndexSearcher(reader), q, hitsPerPage);
