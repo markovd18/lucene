@@ -1,4 +1,6 @@
-package cz.zcu.kiv.nlp.ir;
+package cz.zcu.kiv.nlp.ir.utils;
+
+import static cz.zcu.kiv.nlp.ir.utils.ValidationUtils.checkNotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,8 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
-
-import static cz.zcu.kiv.nlp.ir.ValidationUtils.checkNotNull;
 
 public class FileUtils {
 

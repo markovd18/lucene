@@ -7,6 +7,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
+import cz.zcu.kiv.nlp.ir.index.Indexable;
+
 public record Article(
     String title,
     String author,

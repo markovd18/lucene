@@ -11,6 +11,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 
+import cz.zcu.kiv.nlp.ir.index.IndexAnalyzer;
+import cz.zcu.kiv.nlp.ir.index.IndexDirectoryType;
+import cz.zcu.kiv.nlp.ir.index.Indexable;
 import cz.zcu.kiv.nlp.ir.storage.FSStorage;
 import cz.zcu.kiv.nlp.ir.storage.Storage;
 

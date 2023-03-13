@@ -1,4 +1,4 @@
-package cz.zcu.kiv.nlp.ir;
+package cz.zcu.kiv.nlp.ir.utils;
 
 public class ValidationUtils {
 

@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import cz.zcu.kiv.nlp.ir.FileUtils;
-import cz.zcu.kiv.nlp.ir.Indexable;
+import cz.zcu.kiv.nlp.ir.index.Indexable;
+import cz.zcu.kiv.nlp.ir.utils.FileUtils;
 
 public class FSStorage<TDocument extends Indexable> implements Storage<TDocument> {
 

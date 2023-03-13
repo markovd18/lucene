@@ -1,11 +1,11 @@
 package cz.zcu.kiv.nlp.ir;
 
+import static cz.zcu.kiv.nlp.ir.utils.ValidationUtils.checkNotNull;
+
 import java.io.PrintStream;
 import java.util.Collection;
 
 import org.apache.lucene.document.Document;
-
-import static cz.zcu.kiv.nlp.ir.ValidationUtils.checkNotNull;
 
 public class ResultPrinter {
 
