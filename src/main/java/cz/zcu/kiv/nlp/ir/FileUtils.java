@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import static cz.zcu.kiv.nlp.ir.ValidationUtils.checkNotNull;
+
 public class FileUtils {
 
   /**
@@ -16,9 +18,7 @@ public class FileUtils {
    * @return list of lines
    */
   public static List<String> readTXTFile(final InputStream inputStream) {
-    if (inputStream == null) {
-      throw new IllegalArgumentException("Cannot locate stream");
-    }
+    checkNotNull(inputStream, "Input stream");
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
       List<String> result = new LinkedList<>();

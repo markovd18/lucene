@@ -2,7 +2,6 @@ package cz.zcu.kiv.nlp.ir;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cz.CzechAnalyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -48,30 +47,21 @@ public class Main {
 
     // 3. search
     int hitsPerPage = 1;
-    try (IndexReader reader = DirectoryReader.open(index)) {
-      Scanner scanner = new Scanner(System.in);
-      IndexSearcher searcher = new IndexSearcher(reader);
-      TopDocs docs = searcher.searchAfter(null, q, hitsPerPage);
-      ScoreDoc[] hits = docs.scoreDocs;
+    try (final IndexReader reader = DirectoryReader.open(index)) {
+      final var printer = new ResultPrinter(System.out);
+      final var searcher = new IndexAnalyzer(new IndexSearcher(reader), q, hitsPerPage);
+      try (Scanner scanner = new Scanner(System.in)) {
 
-      while (hits.length > 0) {
-        // 4. display results
-        var storedFields = searcher.storedFields();
-        for (final var hit : hits) {
-          int docId = hit.doc;
-          Document d = storedFields.document(docId);
-          System.out.format("%s (%s) \t %s\n", d.get("author"), d.get("date"), d.get("title"));
+        printer.printDocuments(searcher.nextPage());
+        while (searcher.hasNextPage()) {
+          System.out.println("--- MORE");
+          scanner.nextLine();
+
+          printer.printDocuments(searcher.nextPage());
         }
-
-        System.out.println("--- MORE");
-        scanner.nextLine();
-
-        docs = searcher.searchAfter(hits[hits.length - 1], q, hitsPerPage);
-        hits = docs.scoreDocs;
       }
-
-      scanner.close();
     }
+
   }
 
   private static void createIndex(Analyzer analyzer, Directory index, Collection<? extends Indexable> documents) {
